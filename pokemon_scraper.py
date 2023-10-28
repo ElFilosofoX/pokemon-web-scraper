@@ -62,13 +62,6 @@ def extract_statistics(poke_id: int) -> object:
         all_divs = soup.find_all('div', attrs={'align': 'center'})
         center_panel_info = all_divs[1].findAll('td', {'class': 'fooinfo'})
 
-        height = center_panel_info[6].text.split('\r\n\t\t\t')
-        weight = center_panel_info[7].text.split('\r\n\t\t\t')
-
-        if center_panel_info[6].find('td', string='Standard'):
-            height = center_panel_info[6].find('td', string='Standard').findNext('td').text.replace('"', '" ').split(" ")
-            weight = center_panel_info[7].find('td', string='Standard').findNext('td').text.replace('lbs', 'lbs ').split(" ")
-
         base_stats_td = all_divs[1].find('td', string=re.compile("Base Stats - Total.*")).find_next_siblings('td')
     except Exception:
         logging.error('There was an error trying to identify HTML elements on the webpage. URL: %s', url)
@@ -77,9 +70,6 @@ def extract_statistics(poke_id: int) -> object:
     extracted_pokemon = {
         "name": center_panel_info[1].text,
         "number": '#{}'.format(str(poke_id).zfill(3)),
-        "classification": center_panel_info[5].text,
-        "height": height,
-        "weight": weight,
         "hit_points": int(base_stats_td[0].text),
         "attack": int(base_stats_td[1].text),
         "defense": int(base_stats_td[2].text),
